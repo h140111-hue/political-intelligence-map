@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><title>Test</title></head><body><style>
+#__auth-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0b1020; color: #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+}
+#__auth-overlay .box {
+  background: #1a1d2e; padding: 32px 36px; border-radius: 14px;
+  border: 1px solid #2a2f45; min-width: 320px; max-width: 90vw;
+}
+#__auth-overlay h2 { margin: 0 0 16px; font-size: 18px; color: #fff; }
+#__auth-overlay input {
+  width: 100%; padding: 12px 14px; box-sizing: border-box;
+  background: #0b1020; border: 1px solid #2a2f45; border-radius: 8px;
+  color: #fff; font-size: 16px; margin-bottom: 12px;
+}
+#__auth-overlay button {
+  width: 100%; padding: 12px; background: linear-gradient(135deg,#7c8cf8,#6366f1);
+  color: #fff; border: none; border-radius: 8px; font-size: 15px;
+  font-weight: 600; cursor: pointer;
+}
+#__auth-overlay button:hover { transform: translateY(-1px); }
+#__auth-overlay .msg { color: #f87171; font-size: 13px; margin-top: 10px; min-height: 18px; }
+body.__locked { overflow: hidden !important; }
+</style>
+<div id="__auth-overlay">
+  <div class="box">
+    <h2>🔒 정치역학 인텔리전스 (잠금)</h2>
+    <input id="__pw" type="password" placeholder="비밀번호" autocomplete="off" autofocus />
+    <button id="__btn">확인</button>
+    <div class="msg" id="__msg"></div>
+  </div>
+</div>
+<script>
+(function() {
+  document.body && document.body.classList.add('__locked');
+  const H = 'afd679cd3f9a81fd9ce02e6434a24f848937f09909fabcc3b3781e06036e284c';
+  async function check() {
+    const v = document.getElementById('__pw').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    if (hex === H) {
+      const o = document.getElementById('__auth-overlay'); if (o) o.remove();
+      document.body.classList.remove('__locked');
+    } else {
+      document.getElementById('__msg').textContent = '접근 불가';
+    }
+  }
+  document.getElementById('__btn').addEventListener('click', check);
+  document.getElementById('__pw').addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+})();
+</script>
+<h1>실제 콘텐츠</h1><p>잠금 해제 후 보이는 내용</p></body></html>
